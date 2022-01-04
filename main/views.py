@@ -1,10 +1,11 @@
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, GenericViewSet
+from rest_framework.mixins import CreateModelMixin, UpdateModelMixin, DestroyModelMixin
 
-from main.models import Category, Post
+from main.models import Category, Post, Comment
 from main.permissions import IsAuthor
-from main.serializers import CategorySerializer, PostSerializer, PostListSerializer
+from main.serializers import CategorySerializer, PostSerializer, PostListSerializer, CommentSerializer
 
 
 class CategoriesListView(ListAPIView):
@@ -31,6 +32,15 @@ class PostViewSet(ModelViewSet):
             return [IsAuthor()]
         # просматривать могут все
         return []
+
+
+class CommentViewSet(CreateModelMixin,
+                     UpdateModelMixin,
+                     DestroyModelMixin,
+                     GenericViewSet):
+    quereset = Comment.objects.all()
+    serializer_class = CommentSerializer
+
 
 #TODO: список категорий
 #TODO: CRUD постов
